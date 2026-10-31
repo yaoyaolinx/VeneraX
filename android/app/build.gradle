@@ -25,22 +25,8 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
-def keystorePropertiesFile = rootProject.file("key.properties")
-def keystoreProperties = new Properties()
-if (!keystorePropertiesFile.exists()) {
-    throw new GradleException("Missing android/key.properties for release signing")
-}
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-["storeFile", "storePassword", "keyAlias", "keyPassword"].each { key ->
-    def value = keystoreProperties[key]
-    if (value == null || value.toString().trim().isEmpty()) {
-        throw new GradleException("Missing android/key.properties value: ${key}")
-    }
-}
-def releaseStoreFile = rootProject.file(keystoreProperties["storeFile"])
-if (!releaseStoreFile.exists()) {
-    throw new GradleException("Missing Android release keystore file: ${releaseStoreFile}")
-}
+// Upstream reads android/key.properties here. It is intentionally absent in this
+// personal fork so CI can build without the private release keystore.
 
 android {
     namespace = "io.github.kyosee.venera"
@@ -70,20 +56,9 @@ android {
         jvmTarget = JavaVersion.VERSION_17
     }
 
-    signingConfigs {
-        debug {
-            storeFile releaseStoreFile
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-        }
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile releaseStoreFile
-            storePassword keystoreProperties['storePassword']
-        }
-    }
+    // Personal build: the upstream release keystore is not available here, so
+    // the release variant uses the auto-generated debug signing key and is
+    // re-signed on the device before install.
 
     defaultConfig {
         applicationId = "io.github.kyosee.venera"
@@ -104,7 +79,7 @@ android {
             ndk {
                 abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
             }
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
         }
         debug {
             ndk {
