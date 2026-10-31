@@ -82,6 +82,11 @@ class _ExploreSettingsState extends State<ExploreSettings> {
             hint: "Hides comics carrying a matching tag. A partial tag works, and tags are matched in the app's language.".tl,
           ),
         ).toSliver(),
+        _SwitchSetting(
+          title: "Filter blocked tags in comic lists".tl,
+          subtitle: "Resolves the tags of list items in the background so tag blocking also hides comics while browsing. Costs one extra request per comic on sources that don't send tags with the list.".tl,
+          settingKey: "deepBlockInList",
+        ).toSliver(),
         _PopupWindowSetting(
           title: "Comment keyword blocking".tl,
           builder: () => _ManageBlockListView(
