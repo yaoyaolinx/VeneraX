@@ -393,6 +393,11 @@ class Settings with ChangeNotifier {
     // value (namespace stripped) and of its translated form — see [blockedTagOf].
     'blockedTags': [],
     'blockedCommentWords': [],
+    // List pages resolve the tags of their items in the background so tag
+    // blocking also hides comics while browsing instead of only on the details
+    // page. Off by default: on sources that send no tags with the list it costs
+    // one details request per comic.
+    'deepBlockInList': false,
     'defaultSearchTarget': null,
     'autoPageTurningInterval': 5, // in seconds
     // Continuous modes only: 'scroll' replaces page turns with steady
